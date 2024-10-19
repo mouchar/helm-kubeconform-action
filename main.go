@@ -32,7 +32,7 @@ type Config struct {
 	Strict                bool   `env:"KUBECONFORM_STRICT" envDefault:"true"`
 	AdditionalSchemaPaths []Path `env:"ADDITIONAL_SCHEMA_PATHS" envSeparator:"\n"`
 	ChartsDirectory       Path   `env:"CHARTS_DIRECTORY"`
-	RegexSkipDir          string `env:"REGEX_SKIP_DIR" envDefault:"\.git"`
+	RegexSkipDir          string `env:"REGEX_SKIP_DIR" envDefault:"\\.git"`
 	KubernetesVersion     string `env:"KUBERNETES_VERSION" envDefault:"master"`
 	Kubeconform           Path   `env:"KUBECONFORM"`
 	Helm                  Path   `env:"HELM"`
@@ -68,7 +68,7 @@ func main() {
 
 	zerolog.SetGlobalLevel(level)
 
-	log.Trace().Msgf("Config: %s", cfg)
+	log.Trace().Msgf("Config: %v", cfg)
 
 	additionalSchemaPaths := []string{}
 
@@ -248,6 +248,11 @@ func parsePath(raw string) (interface{}, error) {
 
 	if v == "" {
 		return Path{path: ""}, nil
+	}
+
+	if regexp.MustCompile(`^https?://.+$`).MatchString(v) {
+		log.Trace().Msgf("%s is URL", v)
+		return Path{path: v}, nil
 	}
 
 	parsed, err := filepath.Abs(v)

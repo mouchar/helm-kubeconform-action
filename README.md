@@ -46,6 +46,7 @@ supplying the environment variables yourself:
       env:
         ADDITIONAL_SCHEMA_PATHS: |
           schemas/{{ .ResourceKind }}.json
+          https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json
         CHARTS_DIRECTORY: "charts"
         KUBECONFORM_STRICT: "true"
         HELM_UPDATE_DEPENDENCIES: "true"
